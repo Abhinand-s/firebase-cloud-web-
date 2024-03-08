@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-COMPATIBLE" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>label{display: inline-block;width: 80px;}
+    input,select{width: 120px;}</style>
+    <title>admin interface</title>
+</head>
+<body>
+    <label>Title</label><input id="Namebox" type="text"><br><br>
+    <label>Author</label><input id="Authorbox" type="text"><br><br>
+    <label>Price</label><input id="Pricebox" type="text"><br><br>
+    <label>Name</label>
+    <select id="Category">
+        <option value="story">story</option>
+        <option value="novel">novel</option>
+    </select>
+    <hr>
+    <button id="insbtn">INSERT</button>
+    <button id="selbtn">SELECT</button>
+    <button id="upbtn">UPDATE</button>
+    <button id="delbtn">DELETE</button>
+<!-------- import section------------->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+        import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-analytics.js";
+        // TODO: Add SDKs for Firebase products that you want to use
+        // https://firebase.google.com/docs/web/setup#available-libraries
+      
+        // Your web app's Firebase configuration
+        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        const firebaseConfig = {
+          apiKey: "AIzaSyCmgFd647IntbM-5qFtrzvXEdLfsq9tnNs",
+          authDomain: "sample-f37a7.firebaseapp.com",
+          projectId: "sample-f37a7",
+          storageBucket: "sample-f37a7.appspot.com",
+          messagingSenderId: "608280515914",
+          appId: "1:608280515914:web:36be399827eb4e0268ddb3",
+          measurementId: "G-RZSPL57D0Z"
+        };
+      
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const analytics = getAnalytics(app);
+        import {getDatabase,ref,get,set,child,update,remove} from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js"
+
+        const db = getDatabase();
+
+         // references//
+         var namebox = document.getElementById("Namebox");
+         var authorbox = document.getElementById("Authorbox");
+         var pricebox = document.getElementById("Pricebox");
+         var category = document.getElementById("Category");
+
+         var insbtn = document.getElementById("insbtn");
+         var selbtn = document.getElementById("selbtn");
+         var upbtn = document.getElementById("upbtn");
+         var delbtn = document.getElementById("delbtn");
+
+// insert data function //
+
+        function InsertData(){
+            set(ref(db,"Thebook/" + namebox.value),{
+                Title:namebox.value,
+                author:authorbox.value,
+                price:pricebox.value,
+                categ:category.value
+            })
+            .then(()=>{
+                alert("data stored succesfully");
+            })
+            .catch((error)=>{
+                alert("unsuccessful , error"+ error);
+            });
+        }
+// select data function //
+
+function SelectData(){
+    const dbref = ref(db);
+
+    get(child(dbref,"Thebook/" + namebox.value)).then((snapshot)=>{
+        if(snapshot.exists()){
+            authorbox.value = snapshot.val().author;
+            pricebox.value = snapshot.val().price;
+            category.value = snapshot.val().categ; 
+        }
+
+        else{
+            alert("no data found");
+        }
+    })
+    .catch((error)=>{
+        alert("unsuccessful , error"+ error);
+    });
+}
+
+// update data function
+   function UpdateData(){
+    update(ref(db,"Thebook/" + namebox.value),{
+               
+                author:authorbox.value,
+                price:pricebox.value,
+                categ:category.value
+            })
+            .then(()=>{
+                alert("data update succesfully");
+            })
+            .catch((error)=>{
+                alert("unsuccessful , error"+ error);
+            });
+   }
+
+   // delete function //
+
+   function deleteData(){
+
+    remove(ref(db,"Thebook/" + namebox.value))
+            .then(()=>{
+                alert("data removed succesfully");
+            })
+            .catch((error)=>{
+                alert("unsuccessful , error"+ error);
+            });
+
+   }
+         // assign event to button //
+         insbtn.addEventListener('click', InsertData);
+         selbtn.addEventListener('click',SelectData);
+         upbtn.addEventListener('click',UpdateData);
+         delbtn.addEventListener('click',deleteData);
+      </script>
+</body>
+</html>
